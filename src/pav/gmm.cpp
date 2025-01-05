@@ -112,6 +112,8 @@ namespace upc
 
 		for (n=0; n<data.nrow(); ++n) {
 			/// \TODO Compute the logprob of a single frame of the input data; you can use gmm_logprob() above.
+			/// \DONE verosimilitud calculada
+			lprob+=this->gmm_logprob(data[n]);
 		}
 		return lprob/data.nrow();
 	}
@@ -203,16 +205,23 @@ namespace upc
 	int GMM::em(const fmatrix &data, unsigned int max_it, float inc_threshold, int verbose) {
 		unsigned int iteration;
 		float old_prob=-1e34, new_prob=-1e34, inc_prob=-1e34;
-
+		int gmm, maximization;
 		fmatrix weights(data.nrow(), nmix);
 		for (iteration=0; iteration<max_it; ++iteration) {
 			/// \TODO
 			// Complete the loop in order to perform EM, and implement the stopping criterion.
 			//
 			// EM loop: em_expectation + em_maximization.
-			//
+			//			
 			// Update old_prob, new_prob and inc_prob in order to stop the loop if logprob does not
 			// increase more than inc_threshold.
+			/// \DONE Loop fet
+
+			new_prob = this->em_expectation(data, weights);
+			this->em_maximization(data, weights);
+			inc_prob = new_prob-old_prob;
+			old_prob=new_prob;
+			if(inc_prob<inc_threshold) break;	
 			if (verbose & 01)
 				cout << "GMM nmix=" << nmix << "\tite=" << iteration << "\tlog(prob)=" << new_prob << "\tinc=" << inc_prob << endl;
 		}

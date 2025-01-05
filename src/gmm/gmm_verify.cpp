@@ -24,8 +24,9 @@ int read_gmms(const Directory &dir, const Ext &ext, const vector<string> &gmm_fi
 float verify(const GMM &gmm_candidate, const fmatrix &dat)
 {
 
-	//TODO: implement verification score based on gmm of the candidate
-	float score = 0.0F;
+	/// \TODO implement verification score based on gmm of the candidate
+	/// \DONE retorna el logaritme de la probabilitad de la mostra donada la gmm
+	float score = gmm_candidate.logprob(dat);
 
 	return score;
 }
@@ -34,14 +35,16 @@ float verify(const GMM &gmm_candidate, const fmatrix &dat)
 float verify(const GMM &gmm_candidate, const GMM & gmm_world, const fmatrix &dat, float &lprobcand, float &lprobbackground)
 {
 
-	//TODO: implement verification score based on gmm of the candidate and 'world' model
+	/// \TODO implement verification score based on gmm of the candidate and 'world' model
 	/*
 	  lprobcand is an informative values to be printed as debug information.
 	  The decision is based on the returned value
 	 */
-	float score = 0.0F;
-	lprobcand = 0.0F;
-	lprobbackground = 0.0F;
+	/// \DONE retorna la diferencia entre la logprobabilitat de la mostra donada la gmm del candidat i la logprobabilitat de la mostra donada la gmm del mon
+
+	lprobcand = gmm_candidate.logprob(dat);
+	lprobbackground =gmm_world.logprob(dat);
+	float score = lprobcand - lprobbackground;
 
 	return score;
 

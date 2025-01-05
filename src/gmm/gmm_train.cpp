@@ -10,9 +10,9 @@ using namespace std;
 using namespace upc;
 
 const string DEF_INPUT_EXT = "mcp";
-const unsigned int DEF_ITERATIONS = 20;
+const unsigned int DEF_ITERATIONS = 50;
 const float DEF_THR = 1e-3;
-const unsigned int DEF_NMIXTURES = 5;
+const unsigned int DEF_NMIXTURES = 64;
 const string DEF_GMMFILE = "output.gmm";
 extern int errno;
 
@@ -61,18 +61,24 @@ int main(int argc, const char *argv[])
 	///
 	/// Other alternatives are: vq, em_split... See the options of the program and place each
 	/// initicialization accordingly.
+	/// \DONE Inicialització aleatòria realitzada
 	switch (init_method) {
 		case 0:
+			gmm.random_init(data, nmix);
 			break;
 		case 1:
+			gmm.vq_lbg(data, nmix, init_iterations, init_threshold, verbose);
 			break;
 		case 2:
+			gmm.em_split(data, nmix, init_iterations, init_threshold, verbose);
 			break;
 		default:
 			;
 	}
 
 	/// \TODO Apply EM to estimate GMM parameters (complete the funcion in gmm.cpp)
+	/// \DONE Aplicada EM
+	gmm.em(data, em_iterations, em_threshold, verbose);
 
 	//Create directory, if it is needed
 	gmm_filename.checkDir();
@@ -101,7 +107,7 @@ int usage(const char *progname, int err)
 		<< "  -m mix\tNumber of mixtures (def. " << DEF_NMIXTURES << ")\n"
 		<< "  -N ite\tNumber of final iterations of EM (def. " << DEF_ITERATIONS << ")\n"
 		<< "  -T thr\tLogProbability threshold of final EM iterations (def. " << DEF_THR << ")\n"
-		<< "  -i init\tInitialization method: 0=random, 1=VQ, 2=EM split (def. 0)\n"
+		<< "  -i init\tInitialization method: 0=random, 1=VQ, 2=EM split (def. 2)\n"
 		<< "  -v int\tBit code to control \"verbosity\" (eg: 5 => 00000101" << ")\n";
 	cerr << "\nIn case you use initialization by VQ or EM split, the following options also apply: \n"
 		<< "  -n ite\tNumber of iterations in the initialization of the GMM (def. " << DEF_ITERATIONS << ")\n"
